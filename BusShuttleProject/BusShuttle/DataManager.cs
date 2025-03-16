@@ -1,7 +1,10 @@
+using System.Xml.Schema;
+
 namespace BusShuttle;
 
 public class DataManager
 {
+    string stopsFileName = "stops.txt";
     FileSaver fileSaver;
     public List<Loop> Loops { get; }
     public List<Stop> Stops { get; }
@@ -18,12 +21,12 @@ public class DataManager
         Loops.Add(new Loop("Blue"));
 
         Stops = new List<Stop>();
-        Stops.Add(new Stop("Bango"));
-        Stops.Add(new Stop("Bengo"));
-        Stops.Add(new Stop("Bingo"));
-        Stops.Add(new Stop("Bongo"));
-        Stops.Add(new Stop("Bungo"));
-        Stops.Add(new Stop("Byngo"));
+        var stopsFileContent = File.ReadAllLines(stopsFileName);
+
+        foreach(var stopName in stopsFileContent)
+        {
+            Stops.Add(new Stop(stopName));
+        }
 
         Loops[0].Stops.AddRange(Stops.GetRange(0, 2));
         Loops[1].Stops.AddRange(Stops.GetRange(2, 2));
@@ -44,5 +47,26 @@ public class DataManager
     {
         this.PassengerData.Add(data);
         fileSaver.AppendData(data);
+    }
+
+    public void SynchronizeStops()
+    {
+        File.Delete(stopsFileName);
+        foreach (var stop in Stops)
+        {
+            File.AppendAllText(stopsFileName, stop.Name+Environment.NewLine);
+        }
+    }
+
+    public void AddStop(Stop stop)
+    {
+        Stops.Add(stop);
+        SynchronizeStops();
+    }
+
+    public void RemoveStop(Stop stop)
+    {
+        Stops.Remove(stop);
+        SynchronizeStops();
     }
 }
