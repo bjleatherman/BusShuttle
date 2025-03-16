@@ -1,6 +1,7 @@
 namespace BusShuttle;
 
 using Spectre.Console;
+using Spectre.Console.Cli;
 
 public class ConsoleUI
 {
@@ -68,6 +69,55 @@ public class ConsoleUI
                 );
 
             } while(command != "end");
+        }
+        else if (mode == "manager")
+        {
+            string command;
+            do
+            {
+                List<string> options = new List<string>
+                {
+                    "add stop",
+                    "delete stop",
+                    "list stops",
+                    "end"
+                };
+
+                command = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                    .Title("Enter a command, or end to end")
+                    .AddChoices(options)
+                );
+
+                switch (command)
+                {
+                    case "add stop":
+                        var newStopName = AnsiConsole.Prompt(new TextPrompt<string>("Enter new stop name:"));
+                        dataManager.AddStop(new Stop(newStopName));
+                        break;
+                    case "delete stop":
+                        Stop selectedStop = AnsiConsole.Prompt(
+                            new SelectionPrompt<Stop>()
+                            .Title("Delete which stop")
+                            .AddChoices(dataManager.Stops)
+                        );
+                        dataManager.RemoveStop(selectedStop);
+                        dataManager.SynchronizeStops();
+                        break;
+                    case "list stops":
+                        var table = new Table();
+                        table.AddColumn("Stop Name");
+                        foreach(var stop in dataManager.Stops)
+                        {
+                            table.AddRow(stop.Name);
+                        }
+                        AnsiConsole.Write(table);
+                        break;
+                    default:
+                        break;
+                }
+
+            } while (command != "end");
         }
     }
 }

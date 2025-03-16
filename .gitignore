@@ -6,8 +6,9 @@
 # dotenv files
 .env
 
-# test data
+# Working Data
 passenger-data.txt
+stops.txt
 
 # User-specific files
 *.rsuser
