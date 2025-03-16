@@ -80,6 +80,7 @@ public class ConsoleUI
                     "add stop",
                     "delete stop",
                     "list stops",
+                    "show busiest stop",
                     "end"
                 };
 
@@ -112,6 +113,10 @@ public class ConsoleUI
                             table.AddRow(stop.Name);
                         }
                         AnsiConsole.Write(table);
+                        break;
+                    case "show busiest stop":
+                        var result = Reporter.FindBusiestStop(dataManager.PassengerData);
+                        Console.WriteLine("the busiest stop is: "+result.Name);
                         break;
                     default:
                         break;
