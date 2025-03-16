@@ -4,6 +4,7 @@ namespace BusShuttle;
 
 public class DataManager
 {
+    string passengerDataFileName = "passenger-data.txt";
     string stopsFileName = "stops.txt";
     FileSaver fileSaver;
     public List<Loop> Loops { get; }
@@ -13,7 +14,7 @@ public class DataManager
 
     public DataManager()
     {
-        fileSaver = new FileSaver("passenger-data.txt");
+        fileSaver = new FileSaver(passengerDataFileName);
 
         Loops = new List<Loop>();
         Loops.Add(new Loop("Red"));
@@ -41,6 +42,21 @@ public class DataManager
         Drivers.Add(new Driver("Myanmar"));
 
         PassengerData = new List<PassengerData>();
+
+        if(File.Exists(passengerDataFileName))
+        {
+            var passengerFileContent = File.ReadAllLines(passengerDataFileName);
+            foreach (var line in passengerFileContent)
+            {
+                var split = line.Split(":", StringSplitOptions.RemoveEmptyEntries);
+                var driver = new Driver(split[0]);
+                var loop = new Loop(split[1]);
+                var stop = new Stop(split[2]);
+                int boarded = int.Parse(split[3]);
+
+                PassengerData.Add(new PassengerData(boarded, stop, loop, driver));
+            }
+        }
     }
 
     public void AddNewPassengerData(PassengerData data)
